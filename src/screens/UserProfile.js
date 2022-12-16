@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerPic: {
-    height: 200,
+    height: 250,
     width: "100%"
   },
   toggleContainer: {
