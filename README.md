@@ -28,5 +28,12 @@ We'll need the following tools to get started:
 ```terminal
 $ cd pikadish-ex     // go to project folder
 $ yarn install       // install dependencies
-$ npx expo start     // run the app on mobile
+$ npx expo start     // Starting the development server
 ```
+
+## Opening the app on your phone
+### To open the app:
+
+* On your Android device, press "Scan QR Code" on the "Home" tab of the Expo Go app and scan the QR code you see in the terminal.
+
+* On your iPhone or iPad, open the default Apple "Camera" app and scan the QR code you see in the terminal.
