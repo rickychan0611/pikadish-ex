@@ -1,9 +1,10 @@
 import React from 'react'
 import { Image, StyleSheet, Text, View, Platform, ImageBackground } from 'react-native'
-import userPic from '../../assets/userPic.jpg'
 import { BlurView } from 'expo-blur';
+import userPic from '../../assets/userPic.jpg'
+import { MaterialIcons } from '@expo/vector-icons';
 
-const UserProfile = () => {
+const UserProfile = ({user}) => {
 
   const IosBox = ({ children }) => (
     <>
@@ -29,8 +30,11 @@ const UserProfile = () => {
         style={styles.userPic}
         resizeMode="cover"
       />
-      <Text style={styles.name} numberOfLines={1}>Jacqueline C.</Text>
-      <Text style={styles.findMe}>Find me on Pikadish!</Text>
+      <Text style={styles.name} numberOfLines={1}>{user.name}</Text>
+      <View style={styles.findMeWrapper}>
+        <Text style={styles.findMe}>{user.bio}</Text>
+        <MaterialIcons name="edit" size={14} color="lightgrey" />
+      </View>
       <View style={styles.statusRow}>
         <Text style={styles.statusText}>11 Follower</Text>
         <Text style={{ ...styles.statusText, marginHorizontal: 5 }}>|</Text>
@@ -43,7 +47,7 @@ const UserProfile = () => {
 
   return (
     <View style={styles.wrapper}>
-      {/* Android doesn't support blur view and shadows on transparent view is problematic. 
+      {/* Since Android doesn't support blur view and shadows on transparent view is problematic,
           ImageBackground is used for nice shadow and transparent effect. */}
       {Platform.OS === "ios" ?
         <IosBox>
@@ -153,6 +157,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: "bold",
     marginTop: 8,
+  },
+  findMeWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   findMe: {
     fontSize: 12,

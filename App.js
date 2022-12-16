@@ -1,5 +1,11 @@
+import { useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import * as SplashScreen from 'expo-splash-screen';
+import { View } from 'react-native';
+
+SplashScreen.preventAutoHideAsync();
+
 import Router from './src/Router';
 import {
   useFonts,
@@ -11,15 +17,26 @@ import {
 
 export default function App() {
 
-  useFonts({
+  let [fontsLoaded] = useFonts({
     light, medium, semiBold, bold
   });
 
+  const onLayoutRootView = useCallback(
+    async () => {
+      if (fontsLoaded) {
+        await SplashScreen.hideAsync();
+      }
+    }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
+    <NavigationContainer>
+      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <Router />
-      </NavigationContainer>
-    </SafeAreaProvider>
+      </View>
+    </NavigationContainer>
   );
 }

@@ -1,19 +1,37 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Image, StyleSheet, Text, View, ScrollView } from 'react-native'
+import { Image, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native'
+
+// assets
 import headerPic from '../../assets/headerPic.jpg'
+
+// firebase
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { db } from '../../firebaseApp';
+
+// libraries
+import PagerView from 'react-native-pager-view';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native';
+
+// icons
+import { EvilIcons } from '@expo/vector-icons';
+
+// components
 import SelectionToggle from '../components/SelectionToggle';
 import UserInfoCard from '../components/UserInfoCard';
-import { collection, getDocs, addDoc } from "firebase/firestore";
-import { db } from '../../firebaseApp';
 import Gallery from '../components/Gallery';
-import PagerView from 'react-native-pager-view';
 
-const UserProfile = () => {
+const UserProfile = ({ navigation }) => {
   const pageViewRef = useRef()
+  const insets = useSafeAreaInsets();
   const [dishesAte, setDishesAte] = useState([])
+  const isFocused = useIsFocused();
   const [dishesWillTry, setDishesWillTry] = useState([])
   const [selection, setSelection] = useState(0)
-
+  const [user, setUser] = useState({})
+  const userid = "wT85MiMYkVtcrfPPtdWo" //a fixed user
+  
   useEffect(() => {
     (async () => {
       try {
@@ -36,6 +54,19 @@ const UserProfile = () => {
     })()
   }, [])
 
+  useEffect(() => {
+    (async () => {
+      const userRef = doc(db, "user", userid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        await AsyncStorage.setItem("user", JSON.stringify(userSnap.data()))
+        setUser(userSnap.data())
+      } else {
+        console.log("No such user!");
+      }
+    })()
+  }, [isFocused ])
+
   return (
     <ScrollView style={styles.container}>
       <Image
@@ -43,12 +74,19 @@ const UserProfile = () => {
         style={styles.headerPic}
         resizeMode="cover"
       />
+      <EvilIcons name="gear" size={35} color="lightgray" style={{
+        ...styles.settingIcon,
+        top: insets.top + 10
+      }} />
 
-      <UserInfoCard />
+      <TouchableOpacity
+        onPress={() => navigation.navigate("AccountSetting")}>
+        <UserInfoCard user={user}/>
+      </TouchableOpacity>
 
       <View style={styles.toggleContainer}>
-        <SelectionToggle text="Dish Ate" count={dishesAte.length} selection={selection} pageViewRef={pageViewRef} id={0}/>
-        <SelectionToggle text="Wanna Trys" count={dishesWillTry.length} selection={selection} pageViewRef={pageViewRef} id={1}/>
+        <SelectionToggle text="Dish Ate" count={dishesAte.length} selection={selection} pageViewRef={pageViewRef} id={0} />
+        <SelectionToggle text="Wanna Trys" count={dishesWillTry.length} selection={selection} pageViewRef={pageViewRef} id={1} />
       </View>
 
       <PagerView
@@ -79,7 +117,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+  },
+  settingIcon: {
+    position: "absolute",
+    top: 30,
+    right: 15
   }
 });
+
 
 export default UserProfile
