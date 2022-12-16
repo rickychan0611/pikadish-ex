@@ -122,10 +122,12 @@ const AccountSetting = ({ navigation }) => {
           />
         </View>
 
-        <TouchableOpacity style={styles.button}
-          onPress={() => !loading && handleSave()}>
-          <Text style={styles.buttonText}>{loading ? "Saving" : "Save"}</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonWrapper}>
+          <TouchableOpacity style={styles.button}
+            onPress={() => !loading && handleSave()}>
+            <Text style={styles.buttonText}>{loading ? "Saving" : "Save"}</Text>
+          </TouchableOpacity>
+        </View>
 
       </View>
     </KeyboardAwareScrollView>
@@ -148,7 +150,6 @@ const styles = StyleSheet.create({
   formWrapper: {
     top: -85,
     paddingHorizontal: 30,
-    alignItems: "center"
   },
   imageWrapper: {
     height: 110,
@@ -192,6 +193,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     textAlign: "right"
   },
+  buttonWrapper: {
+    width: "100%",
+    alignItems: "center"
+  },
   button: {
     width: "70%",
     backgroundColor: "#f0b1bd",
@@ -199,7 +204,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 15,
     borderRadius: 25,
-    marginTop: 50
+    marginTop: 50,
   },
   buttonText: {
     fontFamily: "bold",
