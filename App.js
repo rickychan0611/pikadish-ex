@@ -1,20 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Router from './src/Router';
+import {
+  useFonts,
+  OpenSans_300Light as light,
+  OpenSans_400Regular as medium,
+  OpenSans_600SemiBold as semiBold,
+  OpenSans_700Bold as bold,
+} from '@expo-google-fonts/open-sans';
 
 export default function App() {
+
+  useFonts({
+    light, medium, semiBold, bold
+  });
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Router />
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
