@@ -5,8 +5,9 @@ import { Image, StyleSheet, View, ScrollView, TouchableOpacity } from 'react-nat
 import headerPic from '../../assets/headerPic.jpg'
 
 // firebase
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from '../../firebaseApp';
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 // libraries
 import PagerView from 'react-native-pager-view';
@@ -31,7 +32,8 @@ const UserProfile = ({ navigation }) => {
   const [selection, setSelection] = useState(0)
   const [user, setUser] = useState({})
   const userid = "wT85MiMYkVtcrfPPtdWo" //a fixed user
-  
+  const [profilePhoto, setProfilePhoto] = useState("")
+
   useEffect(() => {
     (async () => {
       try {
@@ -64,8 +66,11 @@ const UserProfile = ({ navigation }) => {
       } else {
         console.log("No such user!");
       }
+      const storage = getStorage();
+      const url = await getDownloadURL(ref(storage, 'profile.jpg'))
+      setProfilePhoto(url)
     })()
-  }, [isFocused ])
+  }, [isFocused])
 
   return (
     <ScrollView style={styles.container}>
@@ -74,14 +79,16 @@ const UserProfile = ({ navigation }) => {
         style={styles.headerPic}
         resizeMode="cover"
       />
-      <EvilIcons name="gear" size={35} color="lightgray" style={{
-        ...styles.settingIcon,
-        top: insets.top + 10
-      }} />
+      <EvilIcons name="gear" size={35} color="lightgray"
+        style={{
+          ...styles.settingIcon,
+          top: insets.top + 10
+        }}
+      />
 
       <TouchableOpacity
         onPress={() => navigation.navigate("AccountSetting")}>
-        <UserInfoCard user={user}/>
+        <UserInfoCard user={user} profilePhoto={profilePhoto} />
       </TouchableOpacity>
 
       <View style={styles.toggleContainer}>

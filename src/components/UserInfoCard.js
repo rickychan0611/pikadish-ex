@@ -1,10 +1,10 @@
 import React from 'react'
 import { Image, StyleSheet, Text, View, Platform, ImageBackground } from 'react-native'
+import userPic from '../../assets/placeholder.png'
 import { BlurView } from 'expo-blur';
-import userPic from '../../assets/userPic.jpg'
 import { MaterialIcons } from '@expo/vector-icons';
 
-const UserProfile = ({user}) => {
+const UserProfile = ({ user, profilePhoto }) => {
 
   const IosBox = ({ children }) => (
     <>
@@ -26,7 +26,7 @@ const UserProfile = ({user}) => {
   const Content = () => (
     <View style={styles.userContent}>
       <Image
-        source={userPic}
+        source={!profilePhoto ? userPic : { uri: profilePhoto }}
         style={styles.userPic}
         resizeMode="cover"
       />

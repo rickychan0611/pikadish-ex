@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 //screens
 import AccountSetting from './screens/AccountSetting';
+import CameraScreen from './screens/CameraScreen';
 import UserProfile from './screens/UserProfile';
 
 const Stack = createNativeStackNavigator();
@@ -17,6 +18,7 @@ const Router = () => {
         }}>
         <Stack.Screen name="UserProfile" component={UserProfile} />
         <Stack.Screen name="AccountSetting" component={AccountSetting} />
+        <Stack.Screen name="CameraScreen" component={CameraScreen} />
       </Stack.Navigator>
     </SafeAreaView>
   );

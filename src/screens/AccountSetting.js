@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, Text, View, TouchableOpacity, TextInput, Alert } from 'react-native'
+import { Image, StyleSheet, Text, View, TouchableOpacity, TextInput, Alert, Button } from 'react-native'
 
 // assets
 import headerPic from '../../assets/headerPic.jpg'
-import userPic from '../../assets/userPic.jpg'
-
+import userPic from '../../assets/placeholder.png'
 // icon
 import { FontAwesome } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 // firebase
-import { updateDoc, doc } from "firebase/firestore";
 import { db } from '../../firebaseApp';
+import { updateDoc, doc } from "firebase/firestore";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 // libraries
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useIsFocused } from '@react-navigation/native';
 
 const AccountSetting = ({ navigation }) => {
+  const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
   const [input, setInput] = useState({})
   const [loading, setLoading] = useState(false)
   const userid = "wT85MiMYkVtcrfPPtdWo" //a fixed user
+  const [profilePhoto, setProfilePhoto] = useState("")
 
   const handleChange = (value, name) => {
     setInput(prev => ({ ...prev, [name]: value }))
@@ -45,8 +49,11 @@ const AccountSetting = ({ navigation }) => {
     (async () => {
       const user = await AsyncStorage.getItem("user")
       setInput(JSON.parse(user))
+      const storage = getStorage();
+      const url = await getDownloadURL(ref(storage, 'profile.jpg'))
+      setProfilePhoto(url)
     })()
-  }, [])
+  }, [isFocused])
 
   return (
     <KeyboardAwareScrollView style={styles.container}>
@@ -66,10 +73,13 @@ const AccountSetting = ({ navigation }) => {
       <View style={styles.formWrapper}>
         <View style={styles.imageWrapper}>
           <Image
-            source={userPic}
+            source={!profilePhoto ? userPic : { uri: profilePhoto }}
             style={styles.userPic}
             resizeMode="cover"
           />
+          <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("CameraScreen")}>
+            <AntDesign name="camera" size={20} color="black" />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.textRow}>
@@ -146,6 +156,17 @@ const styles = StyleSheet.create({
   headerPic: {
     height: 250,
     width: "100%"
+  },
+  editButton: {
+    height: 30,
+    width: 30,
+    backgroundColor: "white",
+    position: "absolute",
+    top: -10,
+    right: -10,
+    borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
   },
   formWrapper: {
     top: -85,
