@@ -7,7 +7,6 @@ import headerPic from '../../assets/headerPic.jpg'
 // firebase
 import { db } from '../../firebaseApp';
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 // libraries
 import PagerView from 'react-native-pager-view';
@@ -32,7 +31,6 @@ const UserProfile = ({ navigation }) => {
   const [selection, setSelection] = useState(0)
   const [user, setUser] = useState({})
   const userid = "wT85MiMYkVtcrfPPtdWo" //a fixed user
-  const [profilePhoto, setProfilePhoto] = useState("")
 
   useEffect(() => {
     (async () => {
@@ -66,9 +64,6 @@ const UserProfile = ({ navigation }) => {
       } else {
         console.log("No such user!");
       }
-      const storage = getStorage();
-      const url = await getDownloadURL(ref(storage, 'profile.jpg'))
-      setProfilePhoto(url)
     })()
   }, [isFocused])
 
@@ -88,7 +83,7 @@ const UserProfile = ({ navigation }) => {
 
       <TouchableOpacity
         onPress={() => navigation.navigate("AccountSetting")}>
-        <UserInfoCard user={user} profilePhoto={profilePhoto} />
+        <UserInfoCard user={user}/>
       </TouchableOpacity>
 
       <View style={styles.toggleContainer}>

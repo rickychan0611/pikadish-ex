@@ -4,7 +4,7 @@ import userPic from '../../assets/placeholder.png'
 import { BlurView } from 'expo-blur';
 import { MaterialIcons } from '@expo/vector-icons';
 
-const UserProfile = ({ user, profilePhoto }) => {
+const UserProfile = ({ user }) => {
 
   const IosBox = ({ children }) => (
     <>
@@ -26,7 +26,7 @@ const UserProfile = ({ user, profilePhoto }) => {
   const Content = () => (
     <View style={styles.userContent}>
       <Image
-        source={!profilePhoto ? userPic : { uri: profilePhoto }}
+        source={! user.avatar ? userPic : { uri: user.avatar }}
         style={styles.userPic}
         resizeMode="cover"
       />

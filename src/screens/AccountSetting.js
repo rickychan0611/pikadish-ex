@@ -25,7 +25,6 @@ const AccountSetting = ({ navigation }) => {
   const [input, setInput] = useState({})
   const [loading, setLoading] = useState(false)
   const userid = "wT85MiMYkVtcrfPPtdWo" //a fixed user
-  const [profilePhoto, setProfilePhoto] = useState("")
 
   const handleChange = (value, name) => {
     setInput(prev => ({ ...prev, [name]: value }))
@@ -49,9 +48,9 @@ const AccountSetting = ({ navigation }) => {
     (async () => {
       const user = await AsyncStorage.getItem("user")
       setInput(JSON.parse(user))
-      const storage = getStorage();
-      const url = await getDownloadURL(ref(storage, 'profile.jpg'))
-      setProfilePhoto(url)
+      // const storage = getStorage();
+      // const url = await getDownloadURL(ref(storage, 'profile.jpg'))
+      // setProfilePhoto(url)
     })()
   }, [isFocused])
 
@@ -73,7 +72,7 @@ const AccountSetting = ({ navigation }) => {
       <View style={styles.formWrapper}>
         <View style={styles.imageWrapper}>
           <Image
-            source={!profilePhoto ? userPic : { uri: profilePhoto }}
+            source={!input.avatar ? userPic : { uri: input.avatar }}
             style={styles.userPic}
             resizeMode="cover"
           />

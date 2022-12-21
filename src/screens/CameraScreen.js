@@ -1,10 +1,17 @@
 import { useState, useRef } from 'react';
 import { Camera, CameraType } from 'expo-camera';
 import { Button, StyleSheet, Text, TouchableOpacity, View, Dimensions, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+//icon
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+
+// firebase
+import { db } from '../../firebaseApp';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { updateDoc, doc } from "firebase/firestore";
 
 export default function CameraScreen({ navigation }) {
   const cameraRef = useRef();
@@ -12,6 +19,7 @@ export default function CameraScreen({ navigation }) {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [capturedImage, setCapturedImage] = useState(null);
   const [loading, setLoading] = useState(false)
+  const userid = "wT85MiMYkVtcrfPPtdWo" //a fixed user
 
   if (!permission) {
     // Camera permissions are still loading
@@ -29,29 +37,40 @@ export default function CameraScreen({ navigation }) {
   }
 
   const handleSave = async () => {
-    setLoading(true)
-    const storage = getStorage();
-    const uri = capturedImage.uri
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-      };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
-      xhr.send(null);
-    });
+    try {
+      setLoading(true)
+      const storage = getStorage();
+      const uri = capturedImage.uri
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          console.log(e);
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", uri, true);
+        xhr.send(null);
+      });
 
-    const storageRef = ref(storage, 'profile.jpg');
-
-    uploadBytes(storageRef, blob).then(() => {
-      navigation.goBack()
+      const storageRef = ref(storage, 'profile.jpg');
+      await uploadBytes(storageRef, blob)
+      const url = await getDownloadURL(storageRef)
+      const userRef = doc(db, "user", userid);
+      await updateDoc(userRef, { avatar: url })
+      let user = await AsyncStorage.getItem("user")
+      user = JSON.parse(user)
+      user.avatar = url
+      await AsyncStorage.setItem("user", JSON.stringify(user))
       setLoading(false)
-    });
+      navigation.goBack()
+    }
+    catch (err) {
+      console.log(err)
+      setLoading(false)
+    }
   }
 
   const takePicture = async () => {
